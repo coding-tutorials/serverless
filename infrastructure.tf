@@ -1,6 +1,3 @@
-# AKIAJXKJKMU7LYB624RQ
-# dROfeMSiuQx9vi9h4pBZoAuNHHP2NTiNn6BnnJ7U
-
 variable "aws_access_key" {}
 variable "aws_secret_key" {}
 
