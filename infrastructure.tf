@@ -150,7 +150,61 @@ resource "aws_lambda_permission" "example-api-permission" {
   # within the API Gateway "REST API".
   source_arn = "${aws_api_gateway_deployment.example-api-deployment.execution_arn}/*/*"
 }
-
 output "base_url" {
   value = "${aws_api_gateway_deployment.example-api-deployment.invoke_url}"
+}
+
+resource "aws_s3_bucket" "log-bucket" {
+  bucket = "mamamylogbucket"
+  acl    = "log-delivery-write"
+}
+
+resource "aws_s3_bucket" "front-end-bucket" {
+  bucket = "awslambdaexample2000"
+  acl    = "public-read"
+  policy = <<POLICY
+{
+    "Version":"2012-10-17",
+    "Statement":[
+      {
+        "Sid":"PublicReadGetObject",
+        "Effect":"Allow",
+        "Principal": "*",
+        "Action":["s3:GetObject"],
+        "Resource":["arn:aws:s3:::awslambdaexample2000/*"]
+      }
+    ]
+}
+POLICY
+
+  website {
+    index_document = "index.html"
+  }
+
+  versioning {
+    enabled = true
+  }
+
+  logging {
+   target_bucket = "${aws_s3_bucket.log-bucket.id}"
+   target_prefix = "log/"
+ }
+}
+
+resource "aws_s3_bucket_object" "index" {
+  bucket = "${aws_s3_bucket.front-end-bucket.bucket}"
+  key    = "index.html"
+  source = "./front-end/dist/index.html"
+  content_type = "text/html"
+  //etag   = "${md5(file("path/to/file"))}"
+}
+
+resource "aws_s3_bucket_object" "indexhtml" {
+  bucket = "${aws_s3_bucket.front-end-bucket.bucket}"
+  key    = "bundle.js"
+  source = "./front-end/dist/bundle.js"
+}
+
+output "site_url" {
+  value = "${aws_s3_bucket.front-end-bucket.bucket_domain_name}"
 }
