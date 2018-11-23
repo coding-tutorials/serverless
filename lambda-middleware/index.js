@@ -1,11 +1,6 @@
-exports.handler = async(event, context) => {
+const awsServerlessExpress = require('aws-serverless-express')
+const app = require('./src/server')
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: 'Tacallypau!!',
-      input: event,
-    })
-  }
+const server = awsServerlessExpress.createServer(app)
 
-}
+exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context)
