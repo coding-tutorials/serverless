@@ -84,6 +84,30 @@ resource "aws_api_gateway_resource" "example-app" {
   path_part   = "{proxy+}"
 }
 
+resource "aws_api_gateway_method" "proxy_root" {
+  rest_api_id   = "${aws_api_gateway_rest_api.example-api-gateway.id}"
+  resource_id   = "${aws_api_gateway_resource.example-app.id}"
+  http_method   = "ANY"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "lambda_root" {
+  rest_api_id = "${aws_api_gateway_rest_api.example-api-gateway.id}"
+  resource_id = "${aws_api_gateway_method.proxy_root.resource_id}"
+  http_method = "${aws_api_gateway_method.proxy_root.http_method}"
+
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = "${aws_lambda_function.example-lambda-middleware.invoke_arn}"
+}
+/*
+resource "aws_api_gateway_method_response" "200" {
+  rest_api_id = "${aws_api_gateway_rest_api.example-api-gateway.id}"
+  resource_id = "${aws_api_gateway_method.proxy_root.resource_id}"
+  http_method = "${aws_api_gateway_method.proxy_root.http_method}"
+  status_code = "200"
+}*/
+
 # resource "aws_api_gateway_method" "example-app-method1" {
 #   rest_api_id   = "${aws_api_gateway_rest_api.example-api-gateway.id}"
 #   resource_id   = "${aws_api_gateway_resource.example-app.id}"
@@ -101,43 +125,26 @@ resource "aws_api_gateway_resource" "example-app" {
 #   uri                     = "${aws_lambda_function.example-lambda-middleware.invoke_arn}"
 # }
 
-resource "aws_api_gateway_method" "proxy_root" {
-  rest_api_id   = "${aws_api_gateway_rest_api.example-api-gateway.id}"
-  resource_id   = "${aws_api_gateway_rest_api.example-api-gateway.root_resource_id}"
-  http_method   = "ANY"
-  authorization = "NONE"
-}
 
-resource "aws_api_gateway_integration" "lambda_root" {
-  rest_api_id = "${aws_api_gateway_rest_api.example-api-gateway.id}"
-  resource_id = "${aws_api_gateway_method.proxy_root.resource_id}"
-  http_method = "${aws_api_gateway_method.proxy_root.http_method}"
 
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = "${aws_lambda_function.example-lambda-middleware.invoke_arn}"
-}
+
 
 resource "aws_api_gateway_deployment" "example-api-deployment" {
-  # depends_on = [
-  #   "aws_api_gateway_integration.lambda-integration",
-  #   "aws_api_gateway_integration.lambda_root"
-  # ]
 
   rest_api_id = "${aws_api_gateway_rest_api.example-api-gateway.id}"
-  stage_name  = "test"
+  stage_name  = "prod"
 }
-
-resource "aws_api_gateway_method_settings" "example-app-method1-settings" {
-  rest_api_id   = "${aws_api_gateway_rest_api.example-api-gateway.id}"
-  stage_name  = "${aws_api_gateway_deployment.example-api-deployment.stage_name}"
-  method_path = "*/*"
-  settings {
-    logging_level = "INFO"
-    data_trace_enabled = true
-    metrics_enabled = true
-  }
-}
+#
+# resource "aws_api_gateway_method_settings" "example-app-method1-settings" {
+#   rest_api_id   = "${aws_api_gateway_rest_api.example-api-gateway.id}"
+#   stage_name  = "${aws_api_gateway_deployment.example-api-deployment.stage_name}"
+#   method_path = "*/*"
+#   settings {
+#     logging_level = "INFO"
+#     data_trace_enabled = true
+#     metrics_enabled = true
+#   }
+# }
 
 
 resource "aws_lambda_permission" "example-api-permission" {
@@ -148,11 +155,12 @@ resource "aws_lambda_permission" "example-api-permission" {
 
   # The /*/* portion grants access from any method on any resource
   # within the API Gateway "REST API".
-  source_arn = "${aws_api_gateway_deployment.example-api-deployment.execution_arn}/*/*"
+  //source_arn = "${aws_api_gateway_deployment.example-api-deployment.execution_arn}/*/*"
 }
-output "base_url" {
-  value = "${aws_api_gateway_deployment.example-api-deployment.invoke_url}"
-}
+
+# output "base_url" {
+#   value = "${aws_api_gateway_deployment.example-api-deployment.invoke_url}"
+# }
 
 resource "aws_s3_bucket" "log-bucket" {
   bucket = "mamamylogbucket"
