@@ -1,5 +1,6 @@
-variable "aws_access_key" {}
+ variable "aws_access_key" {}
 variable "aws_secret_key" {}
+variable "aws_rds_password" {}
 
 provider "aws" {
   access_key = "${var.aws_access_key}"
@@ -161,9 +162,9 @@ resource "aws_lambda_permission" "example-api-permission" {
   //source_arn = "${aws_api_gateway_deployment.example-api-deployment.execution_arn}/*/*"
 }
 
-# output "base_url" {
-#   value = "${aws_api_gateway_deployment.example-api-deployment.invoke_url}"
-# }
+ output "base_url" {
+   value = "${aws_api_gateway_deployment.example-api-deployment.invoke_url}"
+ }
 
 resource "aws_s3_bucket" "log-bucket" {
   bucket = "mamamylogbucket"
@@ -218,4 +219,16 @@ resource "aws_s3_bucket_object" "indexhtml" {
 
 output "site_url" {
   value = "${aws_s3_bucket.front-end-bucket.bucket_domain_name}"
+}
+
+resource "aws_db_instance" "default" {
+  allocated_storage    = 20
+  storage_type         = "gp2"
+  engine               = "postgres"
+  engine_version       = "10.4"
+  instance_class       = "db.t2.micro"
+  name                 = "stamper"
+  username             = "terraform"
+  password             = "${var.aws_rds_password}"
+  publicly_accessible = true
 }
