@@ -10,6 +10,16 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: ['babel-loader']
+      },
+      {
+        test: /.*\.(gif|png|jpe?g|svg)$/i,
+        include: path.join(__dirname, 'src', 'assets'),
+        use: ['file-loader']
+      },
+      {
+        test: /\.scss$/,
+        include: path.join(__dirname, 'src', 'sass'),
+        use: ['style-loader', 'css-loader', 'sass-loader']
       }
     ]
   },

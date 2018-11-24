@@ -1,0 +1,56 @@
+$color-back: #fffceb;
+$color-blue: #00678c;
+$color-yellow-light: #ffd147;
+$color-yellow-dark: #cc8550;
+
+.logo {
+  text-align: center;
+
+  img {
+    width: 66%;
+    height: 100%;
+  }
+}
+.identifier{
+  background-color: white;
+  padding: 0.3rem;
+  outline: 1px solid black;
+  text-align: center;
+}
+
+.photos {
+  display: flex;
+  justify-content: space-between;
+
+  .photo {
+    flex: 0 1 32%;
+    background-color: red;
+    height: 100px;
+    text-align: center;
+
+    &__picture {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+}
+
+.semaphore{
+  &__light {
+    height: 1rem;
+    width: 1rem;
+    border-radius: 1rem;
+
+    &__red {
+      background-color: red;
+    }
+
+    &__yellow {
+      background-color: yellow;
+    }
+
+    &__green {
+      background-color: green;
+    }
+  }
+}
