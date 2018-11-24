@@ -1,6 +1,9 @@
- variable "aws_access_key" {}
+variable "aws_access_key" {}
 variable "aws_secret_key" {}
 variable "aws_rds_password" {}
+variable "pusher_key" {}
+variable "pusher_secret" {}
+
 
 provider "aws" {
   access_key = "${var.aws_access_key}"
