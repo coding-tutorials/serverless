@@ -1,14 +1,21 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-//const cors = require('cors')
-const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 
 const app = express()
 
-app.get('/createPhotos/:id', (req, res) => {
+const pictureGenerator = require('./pictureGenerator')
+const database = require('./database')
+
+app.get('/pictures/:id', async (req, res) => {
+  const id = req.params.id
+  console.log('vai gerar pics')
+  const pictures = await pictureGenerator.generateThreePictures()
+  console.log('vai gerar data')
+  await database.savePictures(id, pictures)
+
   res.json({
-    id: req.id,
-    photos: ['1', '2', '3']
+    id,
+    pictures
   })
 })
 

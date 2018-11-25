@@ -75,6 +75,12 @@ resource "aws_lambda_function" "example-lambda-middleware" {
   runtime = "nodejs8.10"
 
   role = "${aws_iam_role.example-role.arn}"
+
+  environment {
+    variables = {
+      NODE_ENV = "production"
+    }
+  }
 }
 
 resource "aws_api_gateway_rest_api" "example-api-gateway" {
