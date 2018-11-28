@@ -9,7 +9,7 @@ import style from './sass/style.scss'
 class Site extends React.Component {
   constructor(props) {
     super(props)
-    
+
     this.state = {
       pictureUrls: [undefined, undefined, undefined]
     }
@@ -19,7 +19,10 @@ class Site extends React.Component {
 
   componentDidMount() {
     Api.getPictures().then((response) => {
-      console.log("response", response.body)
+      console.log("response", response.data.pictures)
+      this.setState( {
+        pictureUrls: response.data.pictures
+      })
     })
   }
 
