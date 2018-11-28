@@ -1,9 +1,8 @@
-const awsServerlessExpress = require('aws-serverless-express')
 const app = require('./src/server')
 
-const isProductionEnvironment = process.env.NODE_ENV === 'production'
-
 const startAwsLambdaServer = () => {
+  const awsServerlessExpress = require('aws-serverless-express')
+
   const server = awsServerlessExpress.createServer(app)
   exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context)
 }
