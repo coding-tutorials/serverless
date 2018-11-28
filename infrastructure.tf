@@ -262,3 +262,8 @@ resource "aws_db_instance" "default" {
   password             = "${var.aws_rds_password}"
   publicly_accessible = true
 }
+
+
+resource "aws_sqs_queue" "terraform_queue" {
+  name                      = "aws-example-queue"
+}
