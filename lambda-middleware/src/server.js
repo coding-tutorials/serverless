@@ -12,7 +12,7 @@ const database = require('./database')
 
 app.get('/pictures/:id', async (req, res) => {
   const id = req.params.id
-  const pictures = pictureGenerator.generateThreePictures()
+  const pictures = await pictureGenerator.generateThreePictures()
   const ip = isProductionEnvironment ? JSON.parse(decodeURIComponent(req.headers['x-apigateway-event'])).identity.sourceIp : req.connection.remoteAddress
 
   await database.savePictures(id, pictures)
