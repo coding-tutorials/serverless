@@ -79,7 +79,9 @@ resource "aws_lambda_function" "example-lambda-middleware" {
   environment {
     variables = {
       NODE_ENV = "production",
-      TR_VAR_aws_rds_password = "${var.aws_rds_password}"
+      TR_VAR_aws_rds_password = "${var.aws_rds_password}",
+      TF_VAR_aws_access_key = "${var.aws_access_key}"
+      TF_VAR_aws_secret_key = "${var.aws_secret_key}"
     }
   }
 }

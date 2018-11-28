@@ -1,4 +1,5 @@
 const app = require('./src/server')
+const isProductionEnvironment = process.env.NODE_ENV === 'production'
 
 const startAwsLambdaServer = () => {
   const awsServerlessExpress = require('aws-serverless-express')
