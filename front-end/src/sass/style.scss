@@ -31,8 +31,18 @@ $color-yellow-dark: #cc8550;
     &__picture {
       max-width: 100%;
       max-height: 100%;
+
+      &--animate {
+        animation: bouncedown 1s;
+      }
     }
   }
+}
+
+@keyframes bouncedown{
+  0% {transform: translateY(-200px);}
+  50% {transform: translateY(-200px);}
+  100% {transform: translateY(0px);}
 }
 
 .semaphore{
