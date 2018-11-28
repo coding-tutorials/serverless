@@ -2,10 +2,22 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 class Photo extends React.Component {
+  constructor(props){
+      super(props)
+      this.state = {
+        hasToAnimate: false
+      }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.pictureUrl !== prevProps.pictureUrl) {
+      this.setState({ hasToAnimate: true })
+    }
+  }
 
   render() {
     return <div className="photo">
-      <img className="photo__picture" src={this.props.pictureUrl} />
+      <img className={`photo__picture ${this.state.hasToAnimate ? 'photo__picture--animate' : ""}`} src={this.props.pictureUrl} />
       <div className="photo__status"></div>
     </div>
   }
