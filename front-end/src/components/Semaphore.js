@@ -1,6 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+import actions from '../redux/actions'
+
 class Semaphore extends React.Component {
   constructor(props){
     super(props)
@@ -10,10 +12,10 @@ class Semaphore extends React.Component {
   }
   componentDidUpdate(prevProps) {
     if (prevProps.status !== this.props.status) {
-      if (this.props.status === 1) {
+      if (this.props.status === actions.GET_PICTURES) {
         this.setState({ message: 'Getting Stamps...' })
       }
-      if (this.props.status === 2) {
+      if (this.props.status === actions.DONE) {
         this.setState({ message: 'Done!' })
       }
     }
@@ -21,9 +23,9 @@ class Semaphore extends React.Component {
 
   render() {
     return <div className="semaphore">
-      {this.props.status === 0 && <div className="semaphore__light semaphore__light__red"></div>}
-      {this.props.status === 1 && <div className="semaphore__light semaphore__light__yellow"></div>}
-      {this.props.status === 2 && <div className="semaphore__light semaphore__light__green"></div>}
+      {this.props.status === actions.GET_TOKEN && <div className="semaphore__light semaphore__light__red"></div>}
+      {this.props.status === actions.GET_PICTURES && <div className="semaphore__light semaphore__light__yellow"></div>}
+      {this.props.status === actions.DONE && <div className="semaphore__light semaphore__light__green"></div>}
       <div className="semaphore__status">{this.state.message}</div>
     </div>
   }
