@@ -11,10 +11,12 @@ const pictureGenerator = require('./pictureGenerator')
 const database = require('./database')
 const queue = require('./queue')
 
+const getIp = (req) => isProductionEnvironment ? JSON.parse(decodeURIComponent(req.headers['x-apigateway-event'])).requestContext.identity.sourceIp : req.connection.remoteAddress
+
+
 app.get('/pictures/:id', async (req, res) => {
   const id = req.params.id
   const pictures = await pictureGenerator.generateThreePictures()
-  const ip = isProductionEnvironment ? JSON.parse(decodeURIComponent(req.headers['x-apigateway-event'])).requestContext.identity.sourceIp : req.connection.remoteAddress
 
   await database.savePictures(id, pictures)
 
@@ -23,11 +25,24 @@ app.get('/pictures/:id', async (req, res) => {
   res.json({
     id,
     pictures,
-    ip
+    ip: getIp(req)
+  })
+})
+
+app.get('/token', async(req, res) => {
+  const ip = getIp(req)
+
+  const tokenId = await database.saveToken(ip)
+
+
+  res.json({
+    tokenId
   })
 })
 
 app.get('/', (req, res) => {
+
+
   res.send('invalid request')
 })
 

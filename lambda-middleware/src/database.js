@@ -8,11 +8,21 @@ const pool = new Pool({
   port: 5432,
 })
 
+const saveToken = async(ip) => {
+  const client = await pool.connect()
+  const id = uuid()
+  const queryResult = await client.query(`INSERT INTO sessions (id, ip, "createdAt") VALUES ('${id}', '${ip}' , now())`)
+
+  await client.release()
+
+  return id
+}
+
 const savePictures = async (id, pictures) => {
   const client = await pool.connect()
 
   const [p1, p2, p3] = pictures
-  const queryResult = await client.query(`INSERT INTO sessions (id, pictures, "createdAt") VALUES ('${id}', '{"${p1}", "${p2}", "${p3}"}' , now())`)
+  const queryResult = await client.query(`UPDATE sessions set pictures = '{"${p1}", "${p2}", "${p3}"}' WHERE id = '${id}'`)
 
   await client.release()
 
@@ -20,5 +30,6 @@ const savePictures = async (id, pictures) => {
 }
 
 module.exports = {
-  savePictures
+  savePictures,
+  saveToken
 }
