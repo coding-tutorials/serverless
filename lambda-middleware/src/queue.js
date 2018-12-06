@@ -7,24 +7,32 @@ AWS.config.update({
 
 const sqs = new AWS.SQS();
 
-const sendMessage = (id) => {
-  const message = {
-   MessageAttributes: {
-    "id": {
-      DataType: "String",
-      StringValue: "The Whistler"
-     }
-   },
-   MessageBody: "Information about current NY Times fiction bestseller for week of 12/11/2016.",
-   QueueUrl: "https://sqs.us-west-2.amazonaws.com/810028704317/aws-example-queue"
-  }
+const sendMessageToSqs = (id, picture) =>
+  new Promise((resolve, reject) => {
+    const message = {
+     MessageAttributes: {
+      "id": {
+        DataType: "String",
+        StringValue: id
+      },
+      "pictureUrl": {
+        DataType: "String",
+        StringValue: picture
+       }
+     },
+     MessageBody: "picture",
+     QueueUrl: "https://sqs.us-west-2.amazonaws.com/810028704317/aws-example-queue"
+    }
 
-  return new Promise((resolve, reject) =>
     sqs.sendMessage(message, (err, data) => {
       if (err) return reject(err)
       return resolve(data)
     })
-  )
+  })
+
+const sendMessage = (id, pictures) => {
+  const sendMessages = pictures.map(picture => sendMessageToSqs(id, picture))
+  return Promise.all(sendMessages)
 }
 
 module.exports = { sendMessage }

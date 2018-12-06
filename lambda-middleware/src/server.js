@@ -20,7 +20,7 @@ app.get('/pictures/:id', async (req, res) => {
 
   await database.savePictures(id, pictures)
 
-  await queue.sendMessage(id)
+  await queue.sendMessage(id, pictures)
 
   res.json({
     id,
