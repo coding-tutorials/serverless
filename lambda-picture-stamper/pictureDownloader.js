@@ -6,7 +6,7 @@ const uuid = require('uuid/v1')
 const downloadedFiles = []
 
 const download = (url) => new Promise((resolve, reject) => {
-  const file = fs.createWriteStream(path.resolve(__dirname, 'tmp', `${uuid()}.jpg`))
+  const file = fs.createWriteStream(`/tmp/${uuid()}.jpg`)
 
   var request = https.get(url, (response) => {
     response.pipe(file)

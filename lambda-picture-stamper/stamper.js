@@ -3,8 +3,9 @@ const stampGetter = require('./stampGetter')
 const sharp = require('sharp')
 
 const stampBase64 = async(url) => {
+  console.log("stamper.goingToDonwload", url)
   const pictureToStamp = await pictureDownloader.download(url)
-
+  console.log("stamper.downloaded", pictureToStamp)
   const picturetoStampSharp = sharp(pictureToStamp)
   const { width, height } = await picturetoStampSharp.metadata()
 
@@ -22,11 +23,15 @@ const stampBase64 = async(url) => {
      that's why we can't place this in a Promise.all() and do async
   */
   const applyStampsSync = stampUrls.reduce(async(accumulatedPromise, { pictureUrl }) => {
+    console.log("stamp.goingToDownloadStamp", pictureUrl)
     const stampFile = await pictureDownloader.download(pictureUrl)
+    console.log("stamp.downloadedStamp", pictureUrl)
+
     const stampResizedBuffer = await sharp(stampFile).resize({ width: stampSize }).toBuffer()
     const left = Math.floor(Math.random() * width)
     const top = Math.floor(Math.random() * height)
 
+    console.log("stamp.goingToStamp")
     return accumulatedPromise.then(async (newBuffer) =>
       await sharp(newBuffer)
           .overlayWith(stampResizedBuffer, { left, top })
@@ -36,8 +41,9 @@ const stampBase64 = async(url) => {
 
   const appliedStampsBuffer = await applyStampsSync
   const lowQualityImage = await sharp(appliedStampsBuffer).jpeg({ quality: 10 }).toBuffer()
-
+  console.log("stamp.goingToDelete")
   await pictureDownloader.deleteLocalFiles()
+  console.log("stamp.deleted")
   return `data:image/jpeg;base64,${lowQualityImage.toString('base64')}`
 }
 
