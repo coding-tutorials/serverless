@@ -1,22 +1,33 @@
-const stamper = require('./stamper')
+const stamper = require('./src/stamper')
+const apiClient = require('./src/apiClient')
 
-exports.handler = async (event, context) => {
-    const { Records } = event
-    const requests = Records.map(async ({ messageId, messageAttributes }) => {
-      const id = messageAttributes.id.stringValue
-      const pictureUrl = messageAttributes.pictureUrl.stringValue
-      console.log("index.records", pictureUrl)
-      const stampedPicture = await stamper.stampBase64('https://www.w3schools.com/w3css/img_lights.jpg')
-      return { id, stampedPicture }
-    })
+const mockEvent = {
+  Records: [
+    { messageId: 0, messageAttributes: { id: 1, pictureUrl: 'https://www.w3schools.com/w3css/img_lights.jpg' }}
+  ]
+}
 
-    console.log(1, requests)
-    try{
-       const awaitedRequests = await Promise.all(requests)
-       console.log(2, awaitedRequests)
-     }catch(e){
-       console.log(3, e.stack)
-     }
+const getPicturesToStampFromEvent = ({ Records }) =>
+  Records.map(({ messageId, messageAttributes }) => {
+    const id = messageAttributes.id.stringValue
+    const pictureUrl = messageAttributes.pictureUrl.stringValue
+    return { id, stampedPicture }
+  })
 
-    return "done"
+
+exports.handler = async (awsEvent, context) => {
+  const event = process.env.NODE_ENV === 'production' ? awsEvent : mockEvent
+  const picturesToStamp = getPicturesToStampFromEvent(event)
+
+  logger.info('index', `${picturesToStamp.length} picture(s) to stamp`)
+
+  const stampedPicturesPromises = picturesToStamp.map(({ id, pictureUrl }) =>
+    stamper.stampBase64('https://www.w3schools.com/w3css/img_lights.jpg')
+  )
+
+  const stampedPictures = await Promise.all(stampedPicturesPromises)
+  logger.info('index', `${stampedPictures.length} picture(s) stamped`)
+
+  const sentPictures = await apiClient.sendPictures(stampedPictures)
+  return
 }
