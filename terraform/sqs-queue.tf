@@ -1,3 +1,3 @@
-resource "aws_sqs_queue" "terraform_queue" {
-  name                      = "aws-example-queue"
+resource "aws_sqs_queue" "pictures_queue" {
+  name = "pictures-queue"
 }
