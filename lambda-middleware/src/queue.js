@@ -1,37 +1,47 @@
 const AWS = require('aws-sdk')
+const logger = require('./logger')
 AWS.config.update({
-  accessKeyId: process.env.TF_VAR_aws_access_key,
-  secretAccessKey: process.env.TF_VAR_aws_secret_key,
+  accessKeyId: process.env.AWS_KEY,
+  secretAccessKey: process.env.AWS_SECRET,
   region: 'us-west-2'
 })
 
 const sqs = new AWS.SQS();
 
-const sendMessageToSqs = (id, picture) =>
+const sendMessageToSqs = ({ sessionId, stampId, pictureUrl }) =>
   new Promise((resolve, reject) => {
     const message = {
      MessageAttributes: {
-      "id": {
+      "sessionId": {
         DataType: "String",
-        StringValue: id
+        StringValue: sessionId
+      },
+      "stampId": {
+        DataType: "String",
+        StringValue: stampId
       },
       "pictureUrl": {
         DataType: "String",
-        StringValue: picture
+        StringValue: pictureUrl
        }
      },
-     MessageBody: "picture",
-     QueueUrl: "https://sqs.us-west-2.amazonaws.com/810028704317/aws-example-queue"
+     MessageBody: "picture to stamp",
+     QueueUrl: process.env.AWS_QUEUE_URL
     }
 
+    logger.info('queue', 'sending...')
     sqs.sendMessage(message, (err, data) => {
-      if (err) return reject(err)
+      if (err) {
+        logger.error('queue', err, err.stack)
+        return reject(err)
+      }
+      logger.info('queue', 'sent')
       return resolve(data)
     })
   })
 
-const sendMessage = (id, pictures) => {
-  const sendMessages = pictures.map(picture => sendMessageToSqs(id, picture))
+const sendMessage = ({ sessionId, stampId, picturesUrls }) => {
+  const sendMessages = picturesUrls.map(pictureUrl => sendMessageToSqs({ sessionId, stampId, pictureUrl }))
   return Promise.all(sendMessages)
 }
 

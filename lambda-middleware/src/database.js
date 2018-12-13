@@ -1,35 +1,29 @@
-const uuid = require('uuid/v4');
+const logger = require('./logger')
+const uuid = require('uuid/v4')
 const { Pool } = require('pg')
 const pool = new Pool({
-  user: 'terraform',
-  host: 'terraform-20181124151006152200000001.ctgvofoww6mt.us-west-2.rds.amazonaws.com',
-  database: 'stamper',
-  password: process.env.TR_VAR_aws_rds_password,
-  port: 5432,
+  user: process.env.DATABASE_USER,
+  host: process.env.DATABASE_URL,
+  database: process.env.DATABASE_NAME,
+  password: process.env.DATABASE_PASSWORD,
+  port: 5432
 })
 
-const saveToken = async(ip) => {
-  const client = await pool.connect()
-  const id = uuid()
-  const queryResult = await client.query(`INSERT INTO sessions (id, ip, "createdAt") VALUES ('${id}', '${ip}' , now())`)
-
-  await client.release()
-
-  return id
-}
-
-const savePictures = async (id, pictures) => {
+const query = async(query) => {
+  logger.info('database', 'connecting')
   const client = await pool.connect()
 
-  const [p1, p2, p3] = pictures
-  const queryResult = await client.query(`UPDATE sessions set pictures = '{"${p1}", "${p2}", "${p3}"}' WHERE id = '${id}'`)
+  logger.info('database', query)
 
-  await client.release()
-
-  return queryResult
+  return client.query(query)
+    .then((result) => {
+      client.release()
+      logger.info('database', 'query executed')
+      return result
+    }).catch((e) => {
+      logger.error('database.query', e, e.stack)
+      return client.release()
+    })
 }
 
-module.exports = {
-  savePictures,
-  saveToken
-}
+module.exports = { query }
