@@ -1,4 +1,3 @@
-
 CREATE TABLE public.pictures (
     id uuid NOT NULL,
     "base64Picture" text NOT NULL,
