@@ -16,3 +16,8 @@ variable "aws_rds_password" {}
 variable "pusher_app_id" {}
 variable "pusher_key" {}
 variable "pusher_secret" {}
+
+# get local ip
+data "http" "myip" {
+  url = "http://ipv4.icanhazip.com"
+}

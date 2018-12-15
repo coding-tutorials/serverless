@@ -27,7 +27,7 @@ resource "aws_iam_role" "example-role" {
 EOF
 }
 
-/*
+# aws lambda cloudwatch
 resource "aws_iam_role_policy" "example-role" {
     name = "ApiCloudwatchPolicy"
     role = "${aws_iam_role.example-role.id}"
@@ -45,7 +45,10 @@ resource "aws_iam_role_policy" "example-role" {
         "logs:DescribeLogStreams",
         "logs:PutLogEvents",
         "logs:GetLogEvents",
-        "logs:FilterLogEvents"
+        "logs:FilterLogEvents",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:CreateNetworkInterface",
+        "ec2:DeleteNetworkInterface"
       ],
       "Resource": "*"
     }
@@ -53,4 +56,3 @@ resource "aws_iam_role_policy" "example-role" {
 }
 EOF
 }
-*/

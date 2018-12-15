@@ -13,4 +13,9 @@ resource "aws_lambda_function" "lambda_picture_stamper" {
       MIDDLEWARE_API_URL = "${aws_api_gateway_deployment.example_api_deployment.invoke_url}"
     }
   }
+
+  # vpc_config {
+  #   subnet_ids = ["${aws_subnet.example_subnet_a.id}", "${aws_subnet.example_subnet_b.id}"]
+  #   security_group_ids = ["${aws_security_group.example_security_group.id}"]
+  # }
 }
