@@ -33,7 +33,7 @@ CREATE INDEX IN_sessions_id ON public.sessions USING btree (id);
 
 CREATE INDEX IN_pictures_id ON public.pictures USING btree (id);
 
-CREATE INDEX IN_sessions_id ON public.stamps USING btree (id);
+CREATE INDEX IN_stamps_id ON public.stamps USING btree (id);
 
 ALTER TABLE ONLY public.stamps
     ADD CONSTRAINT FK_stamps_sessions FOREIGN KEY ("sessionId") REFERENCES public.sessions(id);
