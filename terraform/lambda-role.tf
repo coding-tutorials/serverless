@@ -48,7 +48,10 @@ resource "aws_iam_role_policy" "example-role" {
         "logs:FilterLogEvents",
         "ec2:DescribeNetworkInterfaces",
         "ec2:CreateNetworkInterface",
-        "ec2:DeleteNetworkInterface"
+        "ec2:DeleteNetworkInterface",
+        "sqs:ReceiveMessage",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes"
       ],
       "Resource": "*"
     }

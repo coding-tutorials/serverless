@@ -18,5 +18,5 @@ resource "aws_eip" "example_eip" {
 
 resource "aws_nat_gateway" "example_nat_gateway" {
   allocation_id = "${aws_eip.example_eip.id}"
-  subnet_id     = "${aws_subnet.default_subnet.id}"
+  subnet_id     = "${aws_subnet.public_subnet.id}"
 }

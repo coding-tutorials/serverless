@@ -1,6 +1,6 @@
 resource "aws_db_subnet_group" "example_subnet_group" {
   name = "main"
-  subnet_ids = ["${aws_subnet.default_subnet.id}", "${aws_subnet.secondary_subnet.id}"]
+  subnet_ids = ["${aws_subnet.public_subnet.id}", "${aws_subnet.private_subnet_a.id}", "${aws_subnet.private_subnet_b.id}"]
   tags = { Name = "Example subnet group" }
 }
 
@@ -14,7 +14,7 @@ resource "aws_db_instance" "example-database" {
   username             = "terraform"
   password             = "${var.aws_rds_password}"
   publicly_accessible = true
-  availability_zone = "${aws_subnet.default_subnet.availability_zone}"
+  availability_zone = "${aws_subnet.public_subnet.availability_zone}"
 
   vpc_security_group_ids = ["${aws_security_group.rds_security_group.id}"]
   db_subnet_group_name = "${aws_db_subnet_group.example_subnet_group.name}"

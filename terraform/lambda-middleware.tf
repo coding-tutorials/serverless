@@ -5,7 +5,8 @@ resource "aws_lambda_function" "lambda_middleware" {
   runtime = "nodejs8.10"
 
   role = "${aws_iam_role.example-role.arn}"
-
+  timeout = 10
+  
   environment {
     variables = {
       NODE_ENV = "production",
@@ -28,8 +29,7 @@ resource "aws_lambda_function" "lambda_middleware" {
   }
 
   vpc_config {
-    #from aws: We recommend that you choose at least 2 subnets for Lambda to run your functions in high availability mode.
-    subnet_ids = ["${aws_subnet.default_subnet.id}", "${aws_subnet.secondary_subnet.id}"]
+    subnet_ids = ["${aws_subnet.private_subnet_a.id}", "${aws_subnet.private_subnet_b.id}"]
     security_group_ids = ["${aws_security_group.lambda_security_group.id}"]
   }
 }

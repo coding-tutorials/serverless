@@ -1,4 +1,4 @@
-resource "aws_route_table" "example_route_table" {
+resource "aws_route_table" "example_route_table_igw" {
   vpc_id = "${aws_vpc.example_vpc.id}"
   route {
     cidr_block = "0.0.0.0/0"
@@ -18,12 +18,17 @@ resource "aws_route_table" "example_route_table_nat" {
   tags { Name = "Example route table NAT" }
 }
 
-resource "aws_route_table_association" "igw1" {
-  subnet_id      = "${aws_subnet.default_subnet.id}"
-  route_table_id = "${aws_route_table.example_route_table.id}"
+resource "aws_route_table_association" "igw" {
+  subnet_id      = "${aws_subnet.public_subnet.id}"
+  route_table_id = "${aws_route_table.example_route_table_igw.id}"
 }
 
-resource "aws_route_table_association" "nat1" {
-  subnet_id = "${aws_subnet.secondary_subnet.id}"
+resource "aws_route_table_association" "nat_a" {
+  subnet_id = "${aws_subnet.private_subnet_a.id}"
+  route_table_id = "${aws_route_table.example_route_table_nat.id}"
+}
+
+resource "aws_route_table_association" "nat_b" {
+  subnet_id = "${aws_subnet.private_subnet_b.id}"
   route_table_id = "${aws_route_table.example_route_table_nat.id}"
 }

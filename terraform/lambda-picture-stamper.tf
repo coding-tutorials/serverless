@@ -19,3 +19,8 @@ resource "aws_lambda_function" "lambda_picture_stamper" {
   #   security_group_ids = ["${aws_security_group.example_security_group.id}"]
   # }
 }
+
+resource "aws_lambda_event_source_mapping" "example" {
+  event_source_arn = "${aws_sqs_queue.pictures_queue.arn}"
+  function_name    = "${aws_lambda_function.lambda_picture_stamper.arn}"
+}
