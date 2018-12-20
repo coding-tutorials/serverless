@@ -18,10 +18,29 @@ const createRoutes = (app) => {
   app.get('/pictures/:sessionId', async (req, res) => {
     const { sessionId } = req.params
     logger.info('routes', `GET /pictures/${sessionId}`)
-    const picturesUrls = await pictureGenerator.generateThreePictures()
-    const stampId = await stampsRepository.add(sessionId, picturesUrls)
 
-    await queue.sendMessage({ sessionId, stampId, picturesUrls })
+    logger.info('routes', `GET /pictures/${sessionId}`)
+    let picturesUrls
+    try {
+      picturesUrls = await pictureGenerator.generateThreePictures()
+    }catch(e){
+      logger.error('e', e)
+    }
+
+    logger.info('routes', `GET /pictures/${sessionId}`)
+    let stampId
+    try{
+      stampId = await stampsRepository.add(sessionId, picturesUrls)
+    }catch(e){
+      logger.error('e', e)
+    }
+
+    logger.info('routes', `GET /pictures/${sessionId}`)
+    try{
+      await queue.sendMessage({ sessionId, stampId, picturesUrls })
+    }catch(e){
+      logger.error('e', e)
+    }
 
     return res.json({ sessionId, stampId, picturesUrls })
   })
