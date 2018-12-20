@@ -2,4 +2,7 @@
 
 # tasks
 - zip lambdas
-- build front-end 
+- build front-end
+
+### Deploy
+- Add your local IP into "rds security group" on AWS
