@@ -10,7 +10,8 @@ const add =  async(sessionId, pictureUrls) => {
 const addPicture = async (stampId, base64Picture) => {
   const pictureId = uuid()
   await query(`INSERT INTO pictures (id, "base64Picture", "createdAt") VALUES ('${pictureId}', '${base64Picture}' , now())`)
-  return await query(`UPDATE stamps SET "stampedPicturesIds" = "stampedPicturesIds" || '{"${pictureId}"}' WHERE id = '${stampId}'`)
+  await query(`UPDATE stamps SET "stampedPicturesIds" = "stampedPicturesIds" || '{"${pictureId}"}' WHERE id = '${stampId}'`)
+  return pictureId
 }
 
 module.exports = { add, addPicture }

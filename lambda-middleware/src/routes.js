@@ -1,5 +1,6 @@
 const logger = require('./logger')
 const pictureGenerator = require('./pictureGenerator')
+const picturesRepository = require('./picturesRepository')
 const sessionsRepository = require('./sessionsRepository')
 const stampsRepository = require('./stampsRepository')
 const notification = require('./notification')
@@ -49,10 +50,18 @@ const createRoutes = (app) => {
     const { sessionId, stampId, base64Picture } = req.body
     logger.info('routes', `POST /pictures stampId:${stampId}`)
 
-    const stampedPictureId = await stampsRepository.addPicture(stampId, base64Picture)
-    await notification.notify({ sessionId, stampedPictureId })
+    const pictureId = await stampsRepository.addPicture(stampId, base64Picture)
+    await notification.notify({ sessionId, pictureId })
 
     return res.sendStatus(200)
+  })
+
+  app.get('/picture/:pictureId', async (req, res) => {
+    const { pictureId } = req.params
+
+    const base64Picture = await picturesRepository.get(pictureId)
+
+    return res.send(new Buffer(base64Picture))
   })
 }
 

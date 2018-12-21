@@ -1,5 +1,4 @@
 const logger = require('./logger')
-const uuid = require('uuid/v4')
 const { Pool } = require('pg')
 const pool = new Pool({
   user: process.env.DATABASE_USER,
