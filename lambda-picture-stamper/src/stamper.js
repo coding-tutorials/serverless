@@ -7,7 +7,7 @@ const applyStamp = async(imageBuffer, pictureUrl, stampSize, width, height) => {
   logger.info("stamp.goingToDownloadStamp", pictureUrl)
   const stampFile = await pictureDownloader.download(pictureUrl)
 
-  logger.info("stamp.downloadedStamp", pictureUrl)
+  logger.info("stamp.downloadedStamp", stampFile)
   const stampResizedBuffer = await sharp(stampFile).resize({ width: stampSize }).toBuffer()
   const left = Math.floor(Math.random() * width)
   const top = Math.floor(Math.random() * height)

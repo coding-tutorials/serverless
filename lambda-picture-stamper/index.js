@@ -17,7 +17,7 @@ const handleAwsEvent = async (event, context) => {
   logger.info('index', `${picturesToStamp.length} picture(s) to stamp`)
 
   const stampedPicturesPromises = picturesToStamp.map(({ sessionId, stampId, pictureUrl }) =>
-    stamper.stampBase64('https://www.w3schools.com/w3css/img_lights.jpg')
+    stamper.stampBase64(pictureUrl)
       .then((base64Picture) => ({
         sessionId, stampId, base64Picture
       }))
@@ -38,9 +38,9 @@ if(process.env.NODE_ENV === 'production') {
   handleAwsEvent({
     Records: [
       { messageId: 0, messageAttributes: {
-        sessionId: { stringValue: 'efc19340-03dc-11e9-8158-6b95bf3c4d05' },
+        sessionId: { stringValue: 'ae740ee0-04a4-11e9-9eeb-f7d8d15b660a' },
         stampId: { stringValue: 'fa5abd90-03dc-11e9-8158-6b95bf3c4d05' },
-        pictureUrl: { stringValue:'https://www.w3schools.com/w3css/img_lights.jpg' }
+        pictureUrl: { stringValue:'https://picsum.photos/300/400/?image=573' }
       }}
     ]
   })

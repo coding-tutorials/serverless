@@ -1,6 +1,6 @@
 const request = require('request')
 const logger = require('./logger')
-const { MIDDLEWARE_API_URL }= process.env
+const { MIDDLEWARE_API_URL } = process.env
 
 
 const sendPictures = (pictures) => {
@@ -14,7 +14,9 @@ const sendPictures = (pictures) => {
   )
 
   return Promise.all(postPicturesPromises)
-    .then(() => logger.info('apiClient', 'OK'))
+    .then((results) => {
+      results.forEach((r) => logger.info('apiClient', `${r.statusCode} ${r.body}`))
+    })
     .catch((e) => logger.error('apiClient', e))
 }
 
