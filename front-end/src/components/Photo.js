@@ -10,14 +10,18 @@ class Photo extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.pictureUrl !== prevProps.pictureUrl) {
-      this.setState({ hasToAnimate: true })
+    const hasChangedPicture = this.props.pictureUrl !== prevProps.pictureUrl
+    const hasStamped = this.props.stampedPicture !== prevProps.stampedPicture
+    if (hasChangedPicture || hasStamped) {
+      this.setState({ hasToAnimate: true }, () => {
+        setTimeout(() => this.setState({ hasToAnimate: false }), 500)
+      })
     }
   }
 
   render() {
     return <div className="photo">
-      <img className={`photo__picture ${this.state.hasToAnimate ? 'photo__picture--animate' : ""}`} src={this.props.pictureUrl} />
+      <img className={`photo__picture ${this.state.hasToAnimate ? 'photo__picture--animate' : ""}`} src={this.props.stampedPicture || this.props.pictureUrl} />
       <div className="photo__status"></div>
     </div>
   }
@@ -28,7 +32,8 @@ Photo.defaultProps = {
 };
 
 Photo.propTypes = {
-  pictureUrl: PropTypes.string.isRequired
+  pictureUrl: PropTypes.string,
+  stampedPicture: PropTypes.string
 };
 
 export default Photo

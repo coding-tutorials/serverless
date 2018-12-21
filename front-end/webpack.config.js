@@ -1,7 +1,7 @@
+const webpack = require('webpack')
 const path = require('path')
-
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-
+console.log("AE", process.env.MIDDLEWARE_API_URL)
 module.exports = {
   entry: './src/index.js',
   devtool: 'source-map',
@@ -41,6 +41,12 @@ module.exports = {
   plugins: [
    new HtmlWebpackPlugin({
      template: path.join(__dirname,'src','index.html')
+   }),
+   new webpack.DefinePlugin({
+     'process.env': {
+       'MIDDLEWARE_API_URL': JSON.stringify(process.env.MIDDLEWARE_API_URL),
+       'PUSHER_KEY': JSON.stringify(process.env.TF_VAR_pusher_KEY)
+     }
    })
  ]
 }

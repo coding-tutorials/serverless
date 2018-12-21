@@ -1,35 +1,46 @@
 const api = require('../domain/api')
+const Pusher = require('pusher-js')
 
 const actions = {
-  GET_TOKEN: 'GET_TOKEN',
+  GET_SESSION: 'GET_SESSION',
   GET_TOKEN_ERROR: 'GET_TOKEN_ERROR',
   GET_PICTURES: 'GET_PICTURES',
   GET_PICTURES_ERROR: 'GET_PICTURES_ERROR',
+  GET_STAMPED_PICTURE: 'GET_STAMPED_PICTURE'
 }
 
-const getPictures = (tokenId, dispatch) => api.getPictures(tokenId)
-  .then((response) => dispatch({
+export const listenNotification = (sessionId) => (dispatch) => {
+  Pusher.logToConsole = true
+  const pusher = new Pusher('5b3f7f34937efe18bd63', { cluster: 'us2', forceTLS: true })
+  const channel = pusher.subscribe(`channel-${sessionId}`)
+  channel.bind('pictureStampEvent', ({ pictureId }) =>
+    api.getPicture(pictureId).then((stampedPicture) => dispatch({
+      type: actions.GET_STAMPED_PICTURE,
+      stampedPicture
+    }))
+  )
+}
+
+export const getPictures = (sessionId) => (dispatch) =>
+  api.getPictures(sessionId)
+  .then((picturesUrls) => dispatch({
     type: actions.GET_PICTURES,
-    pictures: response
+    picturesUrls
   }))
-  .catch((response) => dispatch({
+  .catch((error) => dispatch({
     type: actions.GET_PICTURES_ERROR,
-    error: response
+    error
   }))
 
-export const getToken = (cookieId) => (dispatch) =>
-  api.getToken()
-  .then((tokenId) => {
-    getPictures(tokenId, dispatch)
-
-    dispatch({
-     type: actions.GET_TOKEN,
-     tokenId: tokenId
-   })
-  })
-  .catch((response) => dispatch({
+export const getSession = (cookieId) => (dispatch) =>
+  api.getSession()
+  .then((sessionId) => dispatch({
+     type: actions.GET_SESSION,
+     sessionId
+   }))
+  .catch((error) => dispatch({
     type: actions.GET_TOKEN_ERROR,
-    error: error
+    error
   }))
 
 export default actions

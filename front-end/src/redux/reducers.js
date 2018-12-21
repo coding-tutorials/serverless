@@ -1,29 +1,26 @@
 import actions from './actions'
 
 const initialState = {
-  tokenId: 0,
-  status: 0,
-  pictures: [undefined, undefined, undefined]
+  sessionId: 0,
+  status: '',
+  picturesUrls: [],
+  stampedPictures:  []
 }
 
 const reducers = (state = initialState, action) => {
-  if(action.type === actions.GET_TOKEN) {
-    return { ...state, tokenId: action.tokenId, status: actions.GET_TOKEN }
-  }
-
-  if(action.type === actions.GET_TOKEN_ERROR) {
-    console.log("OE?")
-    return state
+  if(action.type === actions.GET_SESSION) {
+    return { ...state, sessionId: action.sessionId, status: actions.GET_SESSION }
   }
 
   if(action.type === actions.GET_PICTURES) {
-    return { ...state, status: action.type, pictures: action.pictures }
+    return { ...state, status: action.type, picturesUrls: state.picturesUrls.concat(action.picturesUrls) }
   }
 
-  if(action.type === actions.GET_PICTURES_ERROR) {
-    return { ...state, error: action.error}
+  if(action.type === actions.GET_STAMPED_PICTURE) {
+    return { ...state, status: action.type, stampedPictures: state.stampedPictures.concat(action.stampedPicture) }
   }
 
+  console.log('klebao')
   return state
 }
 
